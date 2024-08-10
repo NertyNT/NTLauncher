@@ -1,0 +1,43 @@
+{
+    "name": "NTLauncher",
+    "description": "Minecraft server powered by NTLauncher",
+    "image": "ghcr.io/pterodactyl/yolks:java_21",
+    "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -jar {{SERVER_JARFILE}} nogui",
+    "config": {
+        "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"max-players\": \"max_players\",\r\n            \"server-port\": \"server_port\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \"Done\"\r\n}",
+        "logs": "{\r\n    \"custom\": false,\r\n    \"location\": \"logs/latest.log\"\r\n}",
+        "stop": "stop"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!/bin/bash\r\ncd /mnt/server\r\ncurl -sSL https://api.papermc.io/v2/projects/paper/versions/1.20.1/builds/99/downloads/paper-1.20.1-99.jar -o server.jar\r\necho \"Installation completed\"",
+            "container": "alpine:3.16",
+            "entrypoint": "sh"
+        },
+        "container": {
+            "script": "#!/bin/bash\n# Меню управления NTLauncher\nfunction ntlauncher_menu() {\n  while true; do\n    echo \"==========================\"\n    echo \" NTLauncher Menu\"\n    echo \"==========================\"\n    echo \"1) Перезагрузить Minecraft сервер\"\n    echo \"2) Вернуться к консоли сервера\"\n    echo \"3) Выйти из меню\"\n    echo \"==========================\"\n    read -p \"Выберите действие [1-3]: \" choice\n    case $choice in\n      1)\n        echo \"Перезагрузка Minecraft сервера...\"\n        pkill -f 'java -Xms'\n        sleep 5\n        {{STARTUP_COMMAND}}\n        echo \"Сервер Minecraft перезагружается...\"\n        ;;\n      2)\n        echo \"Возвращаемся к консоли сервера...\"\n        break\n        ;;\n      3)\n        echo \"Выход из меню NTLauncher...\"\n        exit 0\n        ;;\n      *)\n        echo \"Неверный выбор, попробуйте снова.\"\n        ;;\n    esac\n  done\n}\nntlauncher_menu",
+            "entrypoint": "/bin/bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Server Jar File",
+            "description": "The name of the server JAR file to use.",
+            "env_variable": "SERVER_JARFILE",
+            "default_value": "server.jar",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:200"
+        },
+        {
+            "name": "Server Memory",
+            "description": "Amount of RAM for the server (in MB).",
+            "env_variable": "SERVER_MEMORY",
+            "default_value": "2048",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|min:512|max:32768"
+        }
+    ]
+}
