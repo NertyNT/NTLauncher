@@ -10,10 +10,36 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # Без цвета
 
-# Файлы и параметры
+# Конфигурация
+REPO_URL="https://raw.githubusercontent.com/NertyNT/NTLauncher/2327fcfa6e6f38300a7562794a39b1fc1d123be7/ntlauncher.sh" # URL к последней версии скрипта
+SCRIPT_NAME="script.sh"
 PIPE=/tmp/minecraft_pipe
 SERVER_JARFILE=server.jar
 SERVER_MEMORY=1024
+
+# Функция для проверки и загрузки обновлений скрипта
+update_script() {
+    echo -e "${YELLOW}Проверка обновлений...${NC}"
+    # Загрузка последней версии скрипта из репозитория
+    curl -s -o "$SCRIPT_NAME.new" "$REPO_URL"
+
+    # Проверка, успешна ли загрузка
+    if [ $? -eq 0 ]; then
+        # Сравнение текущей версии с новой
+        if ! cmp -s "$SCRIPT_NAME" "$SCRIPT_NAME.new"; then
+            echo -e "${GREEN}Найдена новая версия скрипта. Обновление...${NC}"
+            mv "$SCRIPT_NAME.new" "$SCRIPT_NAME"
+            chmod +x "$SCRIPT_NAME"
+            echo -e "${GREEN}Скрипт обновлен. Пожалуйста, перезапустите его.${NC}"
+            exit 0
+        else
+            echo -e "${GREEN}Скрипт обновлен. Нет новых версий.${NC}"
+            rm "$SCRIPT_NAME.new"
+        fi
+    else
+        echo -e "${RED}Не удалось загрузить обновления.${NC}"
+    fi
+}
 
 # Убедитесь, что PIPE существует
 if [ ! -p $PIPE ]; then
@@ -90,6 +116,9 @@ prompt_restart() {
         exit 0
     fi
 }
+
+# Проверка и загрузка обновлений при запуске
+update_script
 
 # Запуск Minecraft сервера в фоновом режиме
 start_minecraft_server &
