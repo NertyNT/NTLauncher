@@ -11,7 +11,7 @@ WHITE='\033[1;37m'
 NC='\033[0m' # Без цвета
 
 # Конфигурация
-REPO_URL="https://raw.githubusercontent.com/NertyNT/NTLauncher/2327fcfa6e6f38300a7562794a39b1fc1d123be7/ntlauncher.sh" # URL к последней версии скрипта
+REPO_URL="https://raw.githubusercontent.com/NertyNT/NTLauncher/main/ntlauncher.sh" # URL к последней версии скрипта
 SCRIPT_NAME="script.sh"
 PIPE=/tmp/minecraft_pipe
 SERVER_JARFILE=server.jar
