@@ -143,3 +143,5 @@ while true; do
         fi
     fi
 done
+
+# проверка
