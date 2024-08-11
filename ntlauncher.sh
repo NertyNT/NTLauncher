@@ -11,35 +11,10 @@ WHITE='\033[1;37m'
 NC='\033[0m' # Без цвета
 
 # Конфигурация
-REPO_URL="https://raw.githubusercontent.com/NertyNT/NTLauncher/main/ntlauncher.sh" # URL к последней версии скрипта
-SCRIPT_NAME="script.sh"
+SCRIPT_NAME="ntlauncher.sh"
 PIPE=/tmp/minecraft_pipe
 SERVER_JARFILE=server.jar
 SERVER_MEMORY=1024
-
-# Функция для проверки и загрузки обновлений скрипта
-update_script() {
-    echo -e "${YELLOW}Проверка обновлений...${NC}"
-    # Загрузка последней версии скрипта из репозитория
-    curl -s -o "$SCRIPT_NAME.new" "$REPO_URL"
-
-    # Проверка, успешна ли загрузка
-    if [ $? -eq 0 ]; then
-        # Сравнение текущей версии с новой
-        if ! cmp -s "$SCRIPT_NAME" "$SCRIPT_NAME.new"; then
-            echo -e "${GREEN}Найдена новая версия скрипта. Обновление...${NC}"
-            mv "$SCRIPT_NAME.new" "$SCRIPT_NAME"
-            chmod +x "$SCRIPT_NAME"
-            echo -e "${GREEN}Скрипт обновлен. Пожалуйста, перезапустите его.${NC}"
-            exit 0
-        else
-            echo -e "${GREEN}Скрипт обновлен. Нет новых версий.${NC}"
-            rm "$SCRIPT_NAME.new"
-        fi
-    else
-        echo -e "${RED}Не удалось загрузить обновления.${NC}"
-    fi
-}
 
 # Убедитесь, что PIPE существует
 if [ ! -p $PIPE ]; then
@@ -87,7 +62,7 @@ ntlauncher_menu() {
             exit 0
             ;;
         *)
-            echo -e "${RED}Неверный выбор, попробуйте снова.${NC}"
+            echo -e "${RED}root@launcher: ${RED}Неверный выбор, попробуйте снова.${NC}"
             ;;
     esac
     # Возврат к командному режиму
@@ -117,9 +92,6 @@ prompt_restart() {
     fi
 }
 
-# Проверка и загрузка обновлений при запуске
-update_script
-
 # Запуск Minecraft сервера в фоновом режиме
 start_minecraft_server &
 
@@ -143,5 +115,3 @@ while true; do
         fi
     fi
 done
-
-# проверка
